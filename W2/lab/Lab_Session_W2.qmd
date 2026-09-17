@@ -1,0 +1,593 @@
+---
+title: "Week 2 Lab: String Operations and Inspecting the House of Commons Corpus"
+format:
+  gfm: default
+editor: source
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  results = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 8,
+  fig.height = 5
+)
+```
+
+## Learning goals
+
+In this lab, you will learn how to:
+
+- use `stringr` to inspect and clean character data;
+- use regular expressions to search for patterns in text;
+- standardise messy metadata values;
+- create a `quanteda` corpus from the House of Commons sample;
+- inspect corpus metadata, subset documents, reshape documents, tokenize text, and inspect keywords in context;
+- create, trim, visualise, and compare document-feature matrices.
+
+The running example uses the supplied House of Commons sample, containing 5,000 speech contributions from 1945 to 2025.
+
+## Load packages
+
+We will use `dplyr` for data manipulation, `stringr` for string operations, `ggplot2` for plotting, and `quanteda` for corpus operations. The `quanteda.textstats` and `quanteda.textplots` packages add useful tools for inspecting features and plotting text objects.
+
+```{r load_packages}
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(quanteda)
+library(quanteda.textstats)
+library(quanteda.textplots)
+```
+
+## Read the House of Commons sample
+
+```{r read_hoc_sample}
+data_path <- "Data/hc_sample_1945_2025.rds"
+
+hoc <- readRDS(data_path)
+```
+
+Create the `year` variable from the speech date.
+
+```{r create_year}
+hoc <- hoc |>
+  mutate(year = as.integer(format(date, "%Y")))
+
+hoc |>
+  select(date, year, speaker, party, agenda, terms, text) |>
+  head(5)
+```
+
+## String operations
+
+R stores text as character data. The House of Commons sample contains several character variables, including `speaker`, `party`, `agenda`, `text`, and `speech_url`.
+
+Let us start with a small vector of agenda labels. These are useful for learning string operations because parliamentary agenda labels are often messy: they vary in capitalisation, contain repeated phrases, and sometimes include bracketed contextual information.
+
+```{r create_agenda_vector}
+agenda_labels <- hoc$agenda[1:8]
+
+agenda_labels
+str(agenda_labels)
+```
+
+The `stringr` package contains many useful functions for working with character data. We will start with basic pattern matching.
+
+### Extracting and locating patterns
+
+`str_extract()` returns the first match to a pattern.
+
+```{r extract_first_pattern}
+str_extract(agenda_labels, "Trade")
+str_extract(agenda_labels, "WAR")
+```
+
+Pattern matching is case-sensitive by default. Compare the following:
+
+```{r case_sensitive_matching}
+str_extract(agenda_labels, "war")
+str_extract(str_to_lower(agenda_labels), "war")
+```
+
+`str_which()` returns the positions of strings that contain a match.
+
+```{r locate_matching_strings}
+str_which(str_to_lower(agenda_labels), "war")
+str_which(str_to_lower(agenda_labels), "trade")
+```
+
+`str_locate()` gives the start and end position of the first match inside each string.
+
+```{r locate_pattern_positions}
+str_locate(str_to_lower(agenda_labels), "war")
+```
+
+`str_locate_all()` gives the positions of all matches.
+
+```{r locate_all_pattern_positions}
+str_locate_all(str_to_lower(agenda_labels), "war")
+```
+
+### Regular expressions
+
+Regular expressions are a compact language for describing text patterns. They are extremely useful for cleaning and searching text.
+
+The expression `\\d` matches a digit. The expression `\\d+` matches one or more digits.
+
+We can see this with parliamentary URLs, which contain dates and identifiers.
+
+```{r inspect_speech_urls}
+speech_urls <- hoc$speech_url[1:5]
+
+speech_urls
+```
+
+```{r extract_digits}
+str_extract(speech_urls, "\\d")
+str_extract(speech_urls, "\\d+")
+str_extract_all(speech_urls, "\\d+")
+```
+
+The `+` means "one or more of the preceding pattern". So `\\d+` collects a whole run of digits rather than just the first digit.
+
+We can also extract dates from the URLs. The pattern below searches for four digits, followed by a slash, three lower-case letters, another slash, and two digits.
+
+```{r extract_url_dates}
+str_extract(speech_urls, "\\d{4}/[a-z]{3}/\\d{2}")
+```
+
+Here are a few useful regex patterns:
+
+- `[a-z]`: any lower-case letter;
+- `[A-Z]`: any upper-case letter;
+- `[A-Za-z]`: any upper-case or lower-case letter;
+- `\\d`: any digit;
+- `\\s`: any whitespace;
+- `\\b`: a word boundary;
+- `.`: any character;
+- `\\.`: a literal full stop.
+
+### Word boundaries
+
+Word boundaries help us avoid accidental matches. For example, `war` also appears inside longer words such as `towards`. The pattern `\\bwar\\b` matches `war` as a separate word.
+
+```{r word_boundary_examples}
+example_text <- c(
+  "The war changed British politics.",
+  "The committee moved towards a compromise.",
+  "Post-war trade was discussed."
+)
+
+str_detect(str_to_lower(example_text), "war")
+str_detect(str_to_lower(example_text), "\\bwar\\b")
+```
+
+Notice that `post-war` still contains `war` after a hyphen. Hyphens are treated as boundaries by this pattern. Whether that is desirable depends on the research question.
+
+### Replacing patterns
+
+`str_replace()` replaces the first match. `str_replace_all()` replaces every match.
+
+```{r replace_patterns}
+str_replace(agenda_labels, "Trade", "TRADE")
+str_replace_all(agenda_labels, "[aeiou]", "-")
+```
+
+In real QTA work, replacement is often used to standardise metadata. For example, the sample contains several versions of "Business of the House".
+
+```{r inspect_business_agendas}
+hoc |>
+  filter(str_detect(str_to_lower(agenda), "business of the house")) |>
+  count(agenda, sort = TRUE) |>
+  head(10)
+```
+
+We can create a cleaned agenda variable by:
+
+- converting to lower case;
+- removing extra whitespace;
+- changing title case variants into a common label;
+- removing bracketed contextual information when we want a shorter label.
+
+```{r clean_agenda_labels}
+hoc <- hoc |>
+  mutate(
+    agenda_clean = agenda |>
+      str_to_lower() |>
+      str_squish() |>
+      str_replace_all("\\s*\\[.*\\]", ""),
+    agenda_clean = case_when(
+      agenda_clean == "business of the house" ~ "Business of the House",
+      agenda_clean == "points of order" ~ "Points of Order",
+      agenda_clean == "topical questions" ~ "Topical Questions",
+      str_detect(agenda_clean, "^engagements") ~ "Engagements",
+      TRUE ~ str_to_title(agenda_clean)
+    )
+  )
+
+hoc |>
+  count(agenda_clean, sort = TRUE) |>
+  head(15)
+```
+
+This kind of cleaning is not neutral. For example, collapsing all labels that start with `Engagements` into one category may be helpful for descriptive plots, but it also removes detail. Cleaning choices should be documented.
+
+## Inspecting a corpus
+
+So far we have worked with character vectors and data frames. The `quanteda` package lets us create a corpus object. A corpus stores texts and document-level metadata together.
+
+```{r create_hoc_corpus}
+hoc_corpus <- corpus(
+  hoc,
+  text_field = "text"
+)
+```
+
+We can inspect the corpus using `summary()`.
+
+```{r summarise_hoc_corpus}
+summary(hoc_corpus, n = 10)
+```
+
+The number of documents in the corpus is:
+
+```{r count_documents}
+ndoc(hoc_corpus)
+```
+
+The document variables, or `docvars`, contain the metadata.
+
+```{r inspect_docvars}
+names(docvars(hoc_corpus))
+head(docvars(hoc_corpus, "party"), 10)
+head(docvars(hoc_corpus, "agenda_clean"), 10)
+```
+
+We can inspect the text of a document by converting it to a character vector.
+
+```{r inspect_corpus_text}
+as.character(hoc_corpus)[1]
+```
+
+## Subsetting a corpus
+
+We can subset a corpus using `corpus_subset()`. The following code keeps Labour speeches since 2010.
+
+```{r subset_labour_since_2010}
+labour_since_2010 <- corpus_subset(
+  hoc_corpus,
+  party == "Labour" & year >= 2010
+)
+
+ndoc(labour_since_2010)
+summary(labour_since_2010, n = 5)
+```
+
+We can also subset by string patterns in document variables. For example, let us keep speeches with agenda labels related to Prime Minister's Questions.
+
+```{r subset_engagements}
+engagements_corpus <- corpus_subset(
+  hoc_corpus,
+  agenda_clean == "Engagements"
+)
+
+ndoc(engagements_corpus)
+summary(engagements_corpus, n = 5)
+```
+
+## Reshaping a corpus
+
+Sometimes we want a different unit of analysis. `corpus_reshape()` can reshape documents into sentences or paragraphs. This is useful when speech-level documents are too long for a coding task.
+
+```{r reshape_to_sentences}
+engagements_sentences <- corpus_reshape(
+  engagements_corpus,
+  to = "sentences"
+)
+
+ndoc(engagements_corpus)
+ndoc(engagements_sentences)
+```
+
+In the reshaped corpus, each sentence is now treated as a document. This is a major research design choice: changing the unit of analysis can change the conclusions of an analysis.
+
+```{r inspect_sentence_corpus}
+as.character(engagements_sentences)[1:5]
+```
+
+As you can see, the third sentence finishies with the 'right hon.' This is a common abbreviation for 'right honourable', which is often used in parliamentary speech, but it also shows that sentence boundaries are not always perfect. In this case, the abbreviation contains a full stop, which is often used to identify sentence boundaries. So before reshaping, it is important to consider whether the text contains abbreviations or other punctuation that might interfere with sentence detection.
+
+## Tokenization and multiword expressions
+
+Tokenization breaks text into smaller units such as words. We will tokenize the House of Commons corpus and preserve a few multiword expressions.
+
+```{r tokenize_hoc_corpus}
+hoc_tokens <- tokens(
+  hoc_corpus,
+  remove_punct = TRUE,
+  remove_symbols = TRUE,
+  remove_numbers = FALSE
+)
+```
+
+Some political concepts are multiword expressions. If we want `Prime Minister` or `European Union` to be treated as phrases, we can compound them.
+
+```{r compound_multiword_expressions}
+hoc_tokens <- tokens_compound(
+  hoc_tokens,
+  pattern = phrase(c(
+    "Prime Minister",
+    "House of Commons",
+    "European Union",
+    "National Health Service"
+  ))
+)
+```
+
+Now we can inspect keywords in context using `kwic()`.
+
+```{r kwic_european_union}
+kwic(
+  hoc_tokens,
+  pattern = phrase("European_Union"),
+  window = 8
+) |>
+  head(10)
+```
+
+We can also inspect a single-word pattern.
+
+```{r kwic_economy}
+kwic(
+  hoc_tokens,
+  pattern = "economy",
+  window = 8,
+  valuetype = "fixed",
+  case_insensitive = TRUE
+) |>
+  head(10)
+```
+
+## From tokens to a document-feature matrix
+
+A document-feature matrix, or DFM, represents documents as rows and features as columns. In most introductory QTA workflows, these features are words or phrases. The cell values usually count how often each feature appears in each document.
+
+The previous section created tokens for KWIC inspection. Now we will create a second tokens object for DFM construction. For this workflow we lower-case the text and remove English stopwords. We keep `padding = TRUE` at first because this helps when identifying collocations.
+
+```{r tokenize_for_dfm}
+hoc_tokens_dfm <- tokens(
+  hoc_corpus,
+  what = "word",
+  remove_punct = TRUE,
+  padding = TRUE,
+  remove_symbols = TRUE,
+  remove_numbers = FALSE,
+  remove_url = TRUE,
+  remove_separators = TRUE,
+  split_hyphens = FALSE
+) |>
+  tokens_tolower() |>
+  tokens_remove(stopwords("en"), padding = TRUE)
+```
+
+### Collocations
+
+Collocations are words that occur together more often than we would expect by chance. In parliamentary text, examples might include `prime minister`, `European Union`, or `hon. member`.
+
+```{r find_collocations}
+hoc_collocations <- textstat_collocations(
+  hoc_tokens_dfm,
+  min_count = 10
+) |>
+  arrange(desc(lambda))
+
+head(hoc_collocations, 20)
+```
+
+We can compound strong collocations so that they are treated as single features.
+
+```{r compound_collocations_for_dfm}
+hoc_collocation_phrases <- hoc_collocations |>
+  filter(lambda > 10) |>
+  pull(collocation) |>
+  phrase()
+
+hoc_tokens_dfm <- tokens_compound(
+  hoc_tokens_dfm,
+  pattern = hoc_collocation_phrases
+)
+
+hoc_tokens_dfm <- tokens_remove(hoc_tokens_dfm, "")
+```
+
+### Create a DFM
+
+Let us create a DFM and group it by party. This means that each row of the grouped DFM is a party, and each column is a feature.
+
+```{r create_party_dfm}
+hoc_dfm_party <- dfm(hoc_tokens_dfm)
+
+hoc_dfm_party <- dfm_group(
+  hoc_dfm_party,
+  groups = docvars(hoc_dfm_party, "party")
+)
+
+dim(hoc_dfm_party)
+```
+
+The `topfeatures()` function shows the most common features.
+
+```{r inspect_top_features}
+topfeatures(hoc_dfm_party, 25)
+```
+
+Most words do not appear in most documents. For this reason, DFMs are usually sparse. `quanteda` stores DFMs efficiently, but trimming rare features still often makes analyses easier to inspect.
+
+```{r trim_party_dfm}
+hoc_dfm_party_trimmed <- dfm_trim(
+  hoc_dfm_party,
+  min_termfreq = 10
+)
+
+dim(hoc_dfm_party)
+dim(hoc_dfm_party_trimmed)
+```
+
+Trimming is not neutral. Rare words may be noise, but they may also be substantively important. 
+
+### Visualise features
+
+Wordclouds are a quick way to inspect frequent features. They are not usually the best final visualisation for research, but they are useful for a first look.
+
+```{r plot_wordcloud}
+textplot_wordcloud(hoc_dfm_party_trimmed, max_words = 50)
+```
+
+A frequency plot is often easier to read.
+
+```{r plot_feature_frequency}
+hoc_feature_frequency <- textstat_frequency(
+  hoc_dfm_party_trimmed,
+  n = 25
+)
+
+hoc_feature_frequency <- hoc_feature_frequency |>
+  mutate(feature = reorder(feature, frequency))
+
+ggplot(
+  hoc_feature_frequency,
+  aes(x = feature, y = frequency)
+) +
+  geom_point() +
+  coord_flip() +
+  labs(
+    x = NULL,
+    y = "Frequency",
+    title = "Most frequent features in the party-level DFM"
+  ) +
+  theme_minimal()
+```
+
+### Compare parties using keyness
+
+Keyness compares feature usage in a target group with feature usage in a reference group. Here we inspect which features are relatively distinctive of Conservative speeches compared with the other parties in the sample.
+
+```{r conservative_keyness}
+conservative_keyness <- textstat_keyness(
+  hoc_dfm_party_trimmed,
+  target = docnames(hoc_dfm_party_trimmed) == "Conservative"
+)
+
+head(conservative_keyness, 20)
+
+textplot_keyness(conservative_keyness, n = 20)
+```
+
+### Track a feature over time
+
+We can also create a DFM grouped by year. Here we focus on Conservative speeches and count how often the feature `economy` appears in each year.
+
+```{r conservative_economy_by_year}
+hoc_dfm_year_conservative <- dfm(hoc_tokens_dfm)
+
+hoc_dfm_year_conservative <- dfm_subset(
+  hoc_dfm_year_conservative,
+  party == "Conservative"
+)
+
+hoc_dfm_year_conservative <- dfm_group(
+  hoc_dfm_year_conservative,
+  groups = docvars(hoc_dfm_year_conservative, "year")
+)
+
+docvars(hoc_dfm_year_conservative, "economy") <- as.numeric(
+  hoc_dfm_year_conservative[, "economy"]
+)
+
+economy_by_year <- docvars(hoc_dfm_year_conservative)
+
+ggplot(economy_by_year, aes(x = as.integer(year), y = economy)) +
+  geom_line() +
+  geom_point(size = 1) +
+  labs(
+    x = NULL,
+    y = "Frequency of 'economy'",
+    title = "Conservative mentions of economy in the teaching sample"
+  ) +
+  theme_minimal()
+```
+
+## Practice exercises
+
+1. Create a character vector called `speaker_names` that contains the first 20 speaker names in `hoc`. Use `str_detect()` to identify which contain `Sir`.
+
+```{r exercise_detect_sir}
+# Your answer here
+```
+
+2. Use `str_extract_all()` to extract all four-digit years from the first 20 `speech_url` values.
+
+```{r exercise_extract_years_from_urls}
+# Your answer here
+```
+
+3. Create a new variable called `mentions_prime_minister` that detects the phrase `Prime Minister` in the speech text. How many speeches mention this phrase?
+
+```{r exercise_prime_minister_indicator}
+# Your answer here
+```
+
+4. Use `corpus_subset()` to create a corpus of Conservative speeches from 2016 onwards. How many documents does this corpus contain?
+
+```{r exercise_subset_conservative}
+# Your answer here
+```
+
+5. Reshape the Conservative corpus from exercise 4 to sentences. How many sentence-level documents does it contain?
+
+```{r exercise_reshape_conservative_sentences}
+# Your answer here
+```
+
+6. Tokenize the full House of Commons corpus and preserve the multiword expressions `Prime Minister`, `European Union`, and `House of Commons`. Use `kwic()` to inspect `Prime_Minister`.
+
+```{r exercise_kwic_prime_minister}
+# Your answer here
+```
+
+7. The sample contains both `agenda` and `agenda_clean`. Count the 10 most common values of each. What changed after cleaning?
+
+```{r exercise_compare_agenda_cleaning}
+# Your answer here
+```
+
+8. Display the most common three-word collocations in `hoc_tokens_dfm`.
+
+```{r exercise_three_word_collocations}
+# Your answer here
+```
+
+9. Create a DFM from `hoc_tokens_dfm` and group it by `party`. Call the result `hoc_dfm_exercise`. How many documents and features does it have?
+
+```{r exercise_create_grouped_dfm}
+# Your answer here
+```
+
+10. Trim `hoc_dfm_exercise` so that it only contains features that appear at least 20 times. Inspect the new dimensions.
+
+```{r exercise_trim_grouped_dfm}
+# Your answer here
+```
+
+11. Use `textstat_keyness()` to display the most distinctive features for Labour speeches compared with all other parties.
+
+```{r exercise_labour_keyness}
+# Your answer here
+```

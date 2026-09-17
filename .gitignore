@@ -1,0 +1,5 @@
+# macOS Finder metadata
+.DS_Store
+
+# Keep Grimmer 2022 book and chapter PDFs local (copyright).
+[Gg]rimmer*2022*.[Pp][Dd][Ff]

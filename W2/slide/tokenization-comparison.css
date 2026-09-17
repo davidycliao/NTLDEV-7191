@@ -1,0 +1,42 @@
+/* Multilingual layouts use the same course palette at 1050 x 700. */
+.reveal .three-languages .columns { display: flex; gap: 24px; margin-top: 20px; }
+.reveal .three-languages .column { flex: 1 1 0; min-width: 0; }
+.reveal .three-languages h3 { color: var(--course-slate); font-size: 0.82em; margin: 0 0 18px; }
+.reveal .three-languages .column p { font-size: 0.64em; line-height: 1.3; }
+.reveal .three-languages .method-label { color: var(--course-muted); margin-bottom: 20px; }
+.reveal .three-languages .method-label p { font-size: 0.49em; }
+.reveal .three-languages .original-text { min-height: 45px; }
+.reveal .three-languages .original-text p { font-size: 0.65em; white-space: nowrap; }
+.reveal .three-languages .token-label { color: var(--course-muted); font-weight: 600; }
+.reveal .three-languages .token-label p { font-size: 0.53em; }
+.reveal .three-languages .token-result { min-height: 98px; }
+.reveal .three-languages .token-result p { font-size: 0.55em; line-height: 1.5; white-space: nowrap; }
+.reveal .three-languages .comparison-note p { font-size: 0.65em; margin-top: 16px; }
+.reveal .three-languages .source { margin-top: 20px; }
+.reveal .three-languages [lang="th"], .reveal .thai-dependency [lang="th"] { font-family: "Thonburi", "Arial Unicode MS", sans-serif; }
+.reveal .three-languages [lang="ja"] { font-family: "Hiragino Sans", "Arial Unicode MS", sans-serif; }
+.reveal .three-languages [lang="zh-Hant"] { font-family: "PingFang TC", "Arial Unicode MS", sans-serif; }
+.reveal .thai-dependency .columns { display: flex; gap: 30px; margin-top: 8px; }
+.reveal .thai-dependency .column { flex: 1 1 0; min-width: 0; }
+.reveal .thai-dependency h3 { color: var(--course-slate); font-size: 0.76em; margin: 10px 0 8px; }
+.reveal .thai-dependency .column img { display: block; width: 100%; margin: 0; }
+.reveal .thai-dependency .column p { margin: 8px 0; }
+.reveal .thai-dependency ul { margin-top: 0; }
+.reveal .thai-dependency li { font-size: 0.61em; line-height: 1.3; margin: 0 0 15px; }
+.reveal .thai-dependency .graph-note p { color: var(--course-muted); font-size: 0.5em; }
+.reveal .thai-dependency .measure-note p { font-size: 0.52em; margin: 8px 0 0; }
+.reveal .thai-dependency .source { margin-top: 14px; }
+
+/* Actual dependency output in Chinese, English and Thai. */
+.reveal .dependency-labels .columns { display: flex; gap: 24px; margin: 18px 0; }
+.reveal .dependency-labels .column { flex: 1 1 0; min-width: 0; }
+.reveal .dependency-labels h3 { font-size: 0.70em; margin: 0 0 12px; white-space: nowrap; }
+.reveal .dependency-labels .method-label p { font-size: 0.49em; color: var(--course-muted); }
+.reveal .dependency-labels .original-text p { font-size: 0.70em; margin: 18px 0; }
+.reveal .dependency-labels [lang="th"] { font-family: "Thonburi", "Arial Unicode MS", sans-serif; }
+.reveal .dependency-labels [lang="zh-Hant"] { font-family: "PingFang TC", "Arial Unicode MS", sans-serif; }
+.reveal .dependency-labels table { width: 100%; font-size: 0.58em; margin: 12px 0; }
+.reveal .dependency-labels th, .reveal .dependency-labels td { padding: 8px 4px; white-space: nowrap; }
+.reveal .dependency-labels .head-ids p { font-size: 0.59em; color: var(--course-slate); }
+.reveal .dependency-labels .dependency-legend p { font-size: 0.59em; margin: 9px 0; }
+.reveal .dependency-labels .source { margin-top: 14px; }

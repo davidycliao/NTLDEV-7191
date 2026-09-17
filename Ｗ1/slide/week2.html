@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>NTLDEV 7191 Week 1: Text as Data</title>
+    <meta charset="utf-8" />
+    <meta name="author" content=".tiny.b[Yen-Chieh Liao 廖彥傑 — National Taiwan University (GIND)]" />
+    <meta name="author" content=".tiny.b[NTLDEV 7191 · Week 1 — Introduction to Quantitative Text Analysis]" />
+    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="my-css.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# .small.hi-slate[Text as Data:]
+]
+.subtitle[
+## .small.hi-green[Computational Methods for Social Science Research]
+]
+.author[
+### .tiny.b[<strong>Yen-Chieh Liao 廖彥傑 — National Taiwan University (GIND)</strong>]
+]
+.author[
+### .tiny.b[NTLDEV 7191 · Week 1 — Introduction to Quantitative Text Analysis]
+]
+.date[
+### .tiny.b[Fall 2026 (115-1) · Fri. 10:20–12:10 · 國發 204]
+]
+
+---
+
+exclude: true
+
+---
+
+exclude: true
+
+
+
+---
+layout: false
+class: inverse, center, middle
+
+# Part 1 &amp;mdash; Text as Data in Political Science
+
+### .grey-mid[what it is, how the field got here, what it is used for]
+
+???
+
+TIMING — 30-minute version. Part 1: about 8.5 minutes, 8 slides.
+Hook: open with the folk-theories question; pay it off on the example slides.
+Anchor: principle 4, validate. Checkpoint: Part 2 divider by 09:30.
+
+---
+layout: true
+# .tiny[Why Text?]
+---
+name: overview
+
+&amp;nbsp;
+
+.huge.hi-grey[Most political activity leaves a **textual/digital trace**.]
+
+
+- Parliamentary speeches, hearing transcripts, party manifestos
+
+
+- Court rulings, bills, administrative records, diplomatic cables
+
+
+- News coverage, social media posts, politicians' tweets
+
+
+- Open-ended survey responses, interview transcripts
+
+
+.hi-grey[**Then:**] human reading and hand coding (e.g., the Manifesto Project)
+
+
+.hi-grey[**Now:**] .hi-turquoise[**scale**] — millions of documents can be analyzed systematically
+
+
+
+
+---
+layout: true
+# .tiny[What Is "Text as Data"?]
+---
+
+&amp;nbsp;
+
+.huge.hi-grey[Treat text as **data**: turn unstructured language/data into analyzable quantitative information to answer social-science questions.]
+
+.grey-mid[**Quantitative text analysis** and **NLP** are the toolkit; the social-science question is the job.]
+
+--
+
+&amp;nbsp;
+
+.center[.hi-slate[**corpus**] .grey-mid[→] .hi-slate[**representation**] .grey-mid[→] .hi-slate[**model**] .grey-mid[→] .hi-slate[**validation**] .grey-mid[→] .hi-slate[**inference**]]
+
+
+&amp;nbsp;
+
+- **Representation**: bag of words, word embeddings, language models
+
+
+- **Model**: dictionaries, classifiers, topic models, scaling
+
+
+- **Validation**: comparison with hand coding, expert judgment, external criteria
+
+---
+layout: true
+# .tiny[How the Field Got Here]
+---
+
+&amp;nbsp;
+
+&lt;svg viewBox="0 0 940 392" style="width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;defs&gt;
+    &lt;marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"&gt;
+      &lt;path d="M0,0 L10,5 L0,10 z" fill="#9aa5a5"/&gt;
+    &lt;/marker&gt;
+  &lt;/defs&gt;
+
+  &lt;rect x="4"   y="34" width="282" height="252" rx="8" fill="#f4f6f5" stroke="#20B2AA" stroke-width="2"/&gt;
+  &lt;rect x="329" y="34" width="282" height="252" rx="8" fill="#f4f6f5" stroke="#314f4f" stroke-width="2"/&gt;
+  &lt;rect x="654" y="34" width="282" height="252" rx="8" fill="#f4f6f5" stroke="#6A5ACD" stroke-width="2"/&gt;
+
+  &lt;line x1="292" y1="160" x2="323" y2="160" stroke="#9aa5a5" stroke-width="2.5" marker-end="url(#ar)"/&gt;
+  &lt;line x1="617" y1="160" x2="648" y2="160" stroke="#9aa5a5" stroke-width="2.5" marker-end="url(#ar)"/&gt;
+
+  &lt;text x="20"  y="22" font-size="19" font-weight="700" fill="#20B2AA"&gt;2003–2010 &amp;#183; Bag of words&lt;/text&gt;
+  &lt;text x="345" y="22" font-size="19" font-weight="700" fill="#314f4f"&gt;2013–2014 &amp;#183; Validation&lt;/text&gt;
+  &lt;text x="670" y="22" font-size="19" font-weight="700" fill="#6A5ACD"&gt;2023– &amp;#183; Meaning in context&lt;/text&gt;
+
+  &lt;text x="20" y="66"  font-size="17" font-weight="700" fill="#314f4f"&gt;Wordscores (2003)&lt;/text&gt;
+  &lt;text x="20" y="86"  font-size="14" fill="#6b7575"&gt;Laver, Benoit &amp;amp; Garry &amp;#183; APSR&lt;/text&gt;
+
+  &lt;text x="20" y="146" font-size="17" font-weight="700" fill="#314f4f"&gt;Wordfish (2008)&lt;/text&gt;
+  &lt;text x="20" y="166" font-size="14" fill="#6b7575"&gt;Slapin &amp;amp; Proksch &amp;#183; AJPS&lt;/text&gt;
+
+  &lt;text x="20" y="226" font-size="17" font-weight="700" fill="#314f4f"&gt;Expressed agenda (2010)&lt;/text&gt;
+  &lt;text x="20" y="246" font-size="14" fill="#6b7575"&gt;Grimmer &amp;#183; Political Analysis&lt;/text&gt;
+
+  &lt;text x="345" y="66"  font-size="17" font-weight="700" fill="#314f4f"&gt;Promise and Pitfalls (2013)&lt;/text&gt;
+  &lt;text x="345" y="86"  font-size="14" fill="#6b7575"&gt;Grimmer &amp;amp; Stewart &amp;#183; Political Analysis&lt;/text&gt;
+  &lt;text x="345" y="106" font-size="13" fill="#6b7575"&gt;the four principles &amp;#8212; and &amp;#8220;validate&amp;#8221;&lt;/text&gt;
+
+  &lt;text x="345" y="176" font-size="17" font-weight="700" fill="#314f4f"&gt;Structural topic model (2014)&lt;/text&gt;
+  &lt;text x="345" y="196" font-size="14" fill="#6b7575"&gt;Roberts et al. &amp;#183; AJPS&lt;/text&gt;
+  &lt;text x="345" y="216" font-size="13" fill="#6b7575"&gt;topics as a function of covariates&lt;/text&gt;
+
+  &lt;text x="670" y="66"  font-size="17" font-weight="700" fill="#314f4f"&gt;Embedding regression (2023)&lt;/text&gt;
+  &lt;text x="670" y="86"  font-size="14" fill="#6b7575"&gt;Rodr&amp;#237;guez, Spirling &amp;amp; Stewart &amp;#183; APSR&lt;/text&gt;
+  &lt;text x="670" y="106" font-size="13" fill="#6b7575"&gt;what a word means, by party and era&lt;/text&gt;
+
+  &lt;text x="670" y="176" font-size="17" font-weight="700" fill="#314f4f"&gt;LLMs as annotators (2024)&lt;/text&gt;
+  &lt;text x="670" y="196" font-size="14" fill="#6b7575"&gt;Heseltine &amp;amp; Clemm von Hohenberg&lt;/text&gt;
+  &lt;text x="670" y="214" font-size="14" fill="#6b7575"&gt;Research &amp;amp; Politics&lt;/text&gt;
+
+  &lt;text x="4" y="330" font-size="17" fill="#314f4f"&gt;What each stage added:&lt;/text&gt;
+  &lt;text x="4" y="360" font-size="17" font-weight="700" fill="#20B2AA"&gt;bag of words&lt;tspan fill="#9aa5a5" font-weight="400"&gt; &amp;#8594; &lt;/tspan&gt;&lt;tspan fill="#314f4f"&gt;validation &amp;amp; covariates&lt;/tspan&gt;&lt;tspan fill="#9aa5a5" font-weight="400"&gt; &amp;#8594; &lt;/tspan&gt;&lt;tspan fill="#6A5ACD"&gt;meaning in context&lt;/tspan&gt;&lt;tspan fill="#9aa5a5" font-weight="400"&gt; &amp;#8594; &lt;/tspan&gt;&lt;tspan fill="#fb6107"&gt;models that label for you&lt;/tspan&gt;&lt;/text&gt;
+  &lt;text x="4" y="386" font-size="16" font-weight="700" fill="#314f4f"&gt;Validation is the one demand that never went away.&lt;/text&gt;
+&lt;/svg&gt;
+
+---
+layout: true
+# .tiny[Roadmap: Two Tasks]
+---
+
+&amp;nbsp;
+
+.huge.hi-grey[Text-as-data research does **two** different things.]
+
+.pull-left[
+
+.hi-grey[**Measurement**]
+
+- How do we turn a concept into a credible text-based measure?
+- Contribution: new **method**, new **measure**, new **dataset**
+- Star of the show: the method itself
+
+]
+
+.pull-right[
+
+.hi-grey[**Application**]
+
+- What substantive question does the measure answer?
+- Contribution: new **empirical finding**, theory test
+- Star of the show: research design and identification
+
+]
+
+--
+
+- The textbook (Grimmer, Roberts &amp; Stewart 2022) has three tasks: **discovery**, **measurement**, **inference**.
+- Here we collapse them: .hi-turquoise[measurement] ≈ discovery + measurement; .hi-purple[application] ≈ inference.
+
+
+
+---
+layout: true
+# .tiny[Example 1: From Pork to Policy]
+---
+
+.more-left[
+
+&lt;img src="course-figures/catalinac-2016-abstract.png" alt="" width="100%" style="display: block; margin: auto;" /&gt;
+
+.tiny.grey-mid[Catalinac (2016), *The Journal of Politics* 78(1): 1–18]
+
+]
+
+.less-right[
+
+&amp;nbsp;
+
+.hi-grey[**Method: an existing tool, not a new one**]
+
+LDA (2003), every topic validated by reading.
+
+]
+
+--
+
+.less-right[
+
+.hi-purple[**The contribution is the political science, not a new algorithm.**]
+
+Building new NLP models is computer science's job; ours is to use them well to answer a question.
+
+]
+
+&lt;div style="clear: both;"&gt;&lt;/div&gt;
+
+---
+layout: true
+# .tiny[Example 2: Open-Ended Answers as Causal Graphs]
+---
+
+.pull-left[
+
+.hi-grey[**Jankin, Liao &amp; Tang (2026)**]
+
+*Folk Theories of Partisan Conflict*
+
+- **Question**: does it matter *why* a partisan thinks the country split — over and above **how much** they dislike the other side?
+- **Data**: 1,200 US adults, quota-matched; several open-ended items (the graphs here code Q7)
+
+]
+
+.pull-right[
+
+.hi-grey[**The prompt**]
+
+.hi-slate[*"Which factors, events, groups, or institutions do you think caused Democrats and Republicans to view each other more negatively than they did 50 years ago? Please explain what caused what, who or what you think was responsible, and what effects followed."*]
+
+]
+
+
+.hi-turquoise[**The measurement move:**] code each free-text answer as a .hi-purple[**directed acyclic graph**] — nodes are the factors the respondent names (15 factors, 3 domains), edges are the causal links they draw between them.
+
+---
+
+&lt;img src="course-figures/folk-theory-dags.png" alt="" width="56%" style="display: block; margin: auto;" /&gt;
+
+.center[.grey-mid[Jankin, Liao &amp; Tang (2026), Fig. 4: popular folk theories of the divide, grouped by root cause (% = within-party share)]]
+
+
+- **Same factors, opposite arrows** — only the direction tells the theories apart; the graph gives each person's .hi-purple[**root cause**].
+
+
+- .hi-red[**Validated:**] coders agree on which factors each answer names (**κ = 0.84**); an LLM with the same codebook matches them (**F1 = 0.92**). .hi-turquoise[**Role of text:**] the theory you hold predicts tolerance of anti-democratic action, net of affect and ideology.
+
+---
+layout: false
+class: inverse, center, middle
+
+# Part 2 &amp;mdash; How This Course Works
+
+### .grey-mid[policy, schedule, assessment]
+
+???
+
+TIMING — Part 2: about 14 minutes, 21 slides before the survey (~35 s each).
+Read-at-a-glance; students have the syllabus PDF. Slow down only on the
+two papers and the generative-AI disclosure rule.
+HARD STOP at minute 24: type 33 + Enter (the survey), whatever is left; Before Next Week comes after it.
+
+---
+layout: true
+# .tiny[Who This Course Is For]
+---
+
+&amp;nbsp;
+
+.huge.hi-grey[A **social science** course — .hi-red[not a technology course].]
+
+
+&amp;nbsp;
+
+.hi-slate[***This is an introductory course designed for students in the Graduate Institute of National Development and related social science disciplines. No advanced technical training is required. Instead, the course emphasizes how text-as-data and NLP techniques can be applied to answer substantive research questions in political science, political communication, legal studies, sociology, and other social science fields.***]
+
+
+&amp;nbsp;
+
+- .hi-red[**Want the technical detail?**] Model internals, architectures, optimization — .grey-mid[this is not that course.]
+
+
+- .hi-turquoise[**The goal:**] your own .hi-purple[**political science / social science paper**], written with these methods.
+
+---
+layout: true
+# .tiny[Where the Course Material Comes From]
+---
+
+.pull-left[
+
+&lt;img src="course-figures/text-as-data-book.png" alt="" width="58%" style="display: block; margin: auto;" /&gt;
+
+]
+
+.pull-right[
+
+.hi-grey[**The framework behind these lectures**]
+
+.hi-slate[Grimmer, Roberts &amp; Stewart (2022)] — *Text as Data: A New Framework for Machine Learning and the Social Sciences*, Princeton University Press
+
+- Our two tasks simplify this book's **discovery → measurement → inference** framework
+
+.hi-red[**You do not need to buy it.**] This course is .hi-turquoise[**paper-first**] — 3–4 core items a week, mostly journal articles and open tutorials. Required book chapters are provided as excerpts.
+
+.hi-grey[**Also useful:**] .tiny[Benoit (2020) · Nielbo et al. (2024) · Watanabe &amp; Müller, *quanteda tutorials* · Jurafsky &amp; Martin, *SLP* (free online)]
+
+]
+
+---
+layout: true
+# .tiny[Course Schedule: 16 Weeks]
+---
+
+&lt;img src="course-figures/schedule-table.png" alt="" width="48%" style="display: block; margin: auto;" /&gt;
+
+---
+
+&amp;nbsp;
+
+.huge.hi-grey[**The term in three blocks.**]
+
+
+- .hi-turquoise[**W1–W3 · Foundations**] — setup, the assumptions behind text-as-data, tokenization, the document-feature matrix
+
+
+- .hi-slate[**W4–W8 · The classic toolkit**] — dictionaries, describing and comparing texts, human coding and document classification, scaling, topic models
+
+
+- .hi-purple[**W9–W13 · Representation learning**] — word embeddings, classical NLP pipelines, transformers, LLMs and multi-agent systems, corpus wrangling
+
+
+&amp;nbsp;
+
+.hi-grey[**Dates worth writing down**]
+
+- **6 labs**: W4, W6, W8, W10, W11, W12
+- **W14 (Dec 11)** poster workshop &amp;nbsp;·&amp;nbsp; **W15 (Dec 18)** final poster presentations &amp;nbsp;·&amp;nbsp; **W16 (Dec 25)** reading week, .hi-red[**manuscript due**]
+
+---
+layout: true
+# .tiny[What You Need Before We Start]
+---
+
+&amp;nbsp;
+
+.hi-grey[This course requires prior experience with R and comfort running some code in a Python environment.] .grey-mid[No advanced technical training beyond that.]
+
+
+.pull-left[
+**R — most lectures and methods**
+
+quanteda, tidytext, text2vec, udpipe, keyATM, spacyr
+]
+.pull-right[
+**Python — selectively**
+
+transformers, flair (transformer models); gensim, spacy (NLP toolkits); BERTopic (topic models)
+]
+
+
+.hi-red[You should bring a laptop with a working development environment already set up] — most sessions mix a short lecture with coding exercises you run yourself. .grey-mid[A detailed setup guide is sent before the first class.]
+
+---
+
+&amp;nbsp;
+
+.hi-grey[IDE: RStudio for R, Positron for Python and cross-language work.]
+
+
+You should be able to edit and run code, debug, manage packages, and use the integrated terminal.
+
+
+.grey-mid[R Markdown / Quarto (RStudio) and Jupyter / Quarto notebooks (Positron) are helpful but not required — we cover the practical setup and workflow in Week 2.]
+
+
+.hi-red[New to these IDEs? Complete a basic tutorial before Week 2] — so the term is spent on methods, not on fighting your tools.
+
+
+.small[Lab reports and the final paper are written in **LaTeX** (via Overleaf) or **Quarto**, whichever you prefer. .grey-mid[Optional: we may use LM Studio to run LLaMA or Mistral locally, with no API costs.]]
+
+---
+
+&amp;nbsp;
+
+.hi-grey[Everything runs through GitHub.]
+
+
+All course materials — lectures, code, data, assignments — are hosted there. You submit through **GitHub Classroom**, in a private repository for each assignment.
+
+
+.hi-turquoise[No Git experience required.] We use **GitHub Desktop** (desktop.github.com) — point-and-click, no command line. RStudio and Positron have built-in Git tools too.
+
+
+**Recommended:** apply for the free **GitHub Student Developer Pack** (education.github.com/pack) with your university email. It gives you GitHub Pro, Copilot, and other developer tools at no cost.
+
+
+.small[**Week 1:** course rules, expectations, and how materials, assignments, and communication are organized. **Week 2:** GitHub Desktop and IDE setup — cloning, committing, submitting.]
+
+---
+
+&amp;nbsp;
+
+.hi-grey[This is a 2-credit course. Plan on roughly 3 hours per week outside class.]
+
+| Activity | Hours / week |
+| :--- | :---: |
+| **Before class** — read the assigned text-as-data papers, review the week's slides | 1–2 |
+| **After class** — the assigned lab activity or lab assignment, when one is set | 1–2 |
+| **Typical weekly total (outside class)** | about 3 |
+
+
+&amp;nbsp;
+
+.hi-slate[On the readings:] the assigned papers come from political science and the social sciences and use text-as-data methods on real research problems. .hi-purple[We read them for the methods and how they are applied, not for their substantive findings.]
+
+---
+layout: true
+# .tiny[Labs, Participation, and the Poster Session]
+---
+
+&amp;nbsp;
+
+.hi-grey[**Lab Assignments — 20%**]
+
+Six hands-on coding exercises applying course methods, submitted via **GitHub Classroom**.
+
+
+.hi-turquoise[The best 3 of your 6 assignments count toward the final grade.]
+
+
+&amp;nbsp;
+
+.hi-grey[**Class Participation — 15%**] &amp;nbsp; Active engagement in:
+
+.pull-left[
+- Class discussions and lab sessions
+- Peer feedback activities
+]
+
+.pull-right[
+- Interactions on GitHub Classroom (questions and answers)
+]
+
+
+.grey-mid[.small[Lab reports, papers, and posters are written in LaTeX or Quarto, rendered to PDF.]]
+
+---
+
+&amp;nbsp;
+
+.hi-grey[**Final Poster Presentation — 20%**]
+
+.huge[Week 15 poster session.]
+
+
+You present a **5-minute overview** of your poster, followed by discussion and peer feedback. You are .hi-red[expected to remain by your poster throughout the session] to answer questions. Faculty members may be invited to attend.
+
+
+Posters should follow **PolMeth poster guidelines** (.tiny[polmeth.emory.edu/instructions.html]): clear visual design emphasizing the research question, data and methods, key findings, and implications.
+
+
+.hi-purple[Week 14 is a preparatory poster workshop] — poster format, visual presentation, and the 5-minute talk. It counts toward class participation.
+
+---
+layout: true
+# .tiny[Your Two Papers]
+---
+
+&amp;nbsp;
+
+.huge[.hi-grey[Midterm paper — 20%.]]
+
+.hi-slate[Your own research project or thesis], written as .hi-red[independent work]. The midterm sets up the study that the final paper completes.
+
+
+.pull-left[
+**What it must contain**
+
+- Abstract
+- Introduction: question and motivation
+- Literature review situating the study
+- Research design: data, methods, strategy
+]
+
+.pull-right[
+**And then**
+
+- Preliminary results, or the planned analytical strategy
+- Feasibility, expected findings, contribution
+
+&amp;nbsp;
+
+.hi-red[Up to 10 pages, no more than 2,500 words.] .grey-mid[Due: TBA.]
+]
+
+---
+
+&amp;nbsp;
+
+.huge[.hi-grey[Final paper — 25%.]]
+
+Also independent work. Build on the midterm and .hi-slate[complete it with the full empirical analysis] — stronger design, robust inference, proper validation and sensitivity tests, then findings, limitations, contribution.
+
+
+- .hi-red[Main text: up to 4,000 words, excluding references], written as a **PSRM Research Note**
+- .hi-turquoise[Appendix: no word or page limit] — robustness checks, alternative specifications, validation, annotation protocols, prompts, model details, code documentation
+- .hi-red[A reproducible code repository], on GitHub or CodeOcean
+- .grey-mid[Due: TBA]
+
+---
+
+&amp;nbsp;
+
+.huge[.hi-grey[Where to start.]]
+
+The syllabus lists these as suggested topics, if you do not already have a corpus in mind.
+
+
+.pull-left[
+**Legislatures and parties**
+
+- Taiwan legislative behavior: roll call votes, speeches, parliamentary questions
+- Legislative speech analysis
+- Party manifestos, across countries or over time
+]
+
+.pull-right[
+**Media and rhetoric**
+
+- Social media political discourse
+- News framing of political issues
+- Comparative political rhetoric
+- CCP wolf warrior diplomacy and propaganda
+]
+
+
+.hi-purple[Pick something you can still be working on at the Week 15 poster session.]
+
+---
+layout: true
+# .tiny[Grading]
+---
+
+&amp;nbsp;
+
+.pull-left[
+
+&lt;img src="course-figures/grading-table.png" alt="" width="88%" style="display: block; margin: auto;" /&gt;
+
+]
+
+.pull-right[
+
+- .hi-grey[**Lab assignments**] — the **best 3 of 6** count, so one rough week will not sink you
+
+- .hi-grey[**Midterm paper**] sets up the study; the .hi-grey[**final paper**] completes it
+
+- .hi-grey[**Poster session in W15**]; W14 is the workshop that gets you ready
+
+- .hi-grey[**Participation**] — discussion, labs, peer feedback, GitHub Classroom
+
+- Write-ups in .hi-slate[**LaTeX (Overleaf)**] or .hi-slate[**Quarto**] &amp;nbsp;·&amp;nbsp; .hi-turquoise[up to **15%** extra credit]
+
+]
+
+---
+layout: true
+# .tiny[Bonus: Up to 15% Extra Credit]
+---
+
+&amp;nbsp;
+
+.hi-grey[Two bonuses: a conference acceptance, or an actual journal submission.]
+
+
+**Conference acceptance — up to .hi-slate[5%]**
+
+.small[APSA (early Jan), MPSA (Nov), EPSS (late Dec), COMPTEXT (early Jan), TPSA (summer), JSQPS (late Oct for Winter, Jul/Aug for Summer); PolMeth — Annual Meeting (Mar), Europe PolMeth (mid-to-late Nov), Asian PolMeth (mid-to-late Oct). Months shown are typical submission deadlines, not meeting dates.]
+
+
+&amp;nbsp;
+
+**Journal submission — up to .hi-slate[10%]**
+
+.small[Revise &amp; Resubmit, or major/minor revision: .hi-turquoise[+10%]. Reject or desk reject: .hi-turquoise[+5%]. Eligible journals: SSCI-indexed political science or social science journals.]
+
+
+.hi-purple[Land both and you can claim both — 15% maximum.]
+
+---
+
+&amp;nbsp;
+
+.hi-grey[What you have to show, and what makes a submission ineligible.]
+
+
+**Proof:** the confirmation email showing the submission **and** the decision letter.
+
+
+.hi-red[Not eligible:] .small[a submission that breaches NTU regulations on academic integrity, research ethics, student conduct, authorship, copyright, data protection, or generative-AI use, or the rules of the relevant conference or journal. It may also be handled under the relevant NTU procedures.]
+
+
+&amp;nbsp;
+
+.grey-mid[.small[Writing an MA thesis? You are encouraged to develop thesis-related submissions with your thesis supervisor. GIND students: a thesis-related co-authored submission must be co-authored with a faculty member affiliated with the Graduate Institute of National Development. For any thesis-related co-authored submission, you must be listed as both **first author** and **corresponding author** to claim the bonus.]]
+
+---
+
+&amp;nbsp;
+
+.hi-grey[Affiliation and geographic identification — required in every bonus submission.]
+
+
+Use the official name **National Taiwan University** in the manuscript text, submission metadata, cover letter, acknowledgements, slides, posters, and any public-facing materials.
+
+
+.hi-red[Do not alter, omit, or downgrade the university name], and do not use wording that misrepresents or diminishes Taiwan's status. Where a location is required, use "Taipei, Taiwan" or "Taipei, Taiwan (R.O.C.)".
+
+
+.small[This does not prohibit evidence-based criticism of Taiwanese politics, institutions, or public policy. It applies to accurate affiliation, geographic description, professional conduct, and non-misleading representation.]
+
+
+.hi-turquoise[If a conference, journal, submission system, or editor asks for wording that changes NTU or Taiwan, you must consult me before proceeding — and you are strongly encouraged to discuss any submission plan with me in advance.]
+
+---
+layout: true
+# .tiny[Using Generative AI]
+---
+
+.hi-grey[This course follows NTU's **Guidelines for the Use of Generative AI and Research Integrity**. AI is a support tool: it does not replace your judgment or your responsibility for what you submit.]
+
+.hi-turquoise[**1. Permitted uses in your assignments**] — conceptualisation; initial literature screening, for human verification; supporting writing and editing; audiovisual and interactive components. The argument and the analysis stay your own.
+
+.hi-purple[**2. Disclose AI use in every submission**] — every assignment, lab report, poster, final paper, and bonus submission. State which tool and version, what you asked it to do, how you used the output, and how you checked it. No AI used? Write: .grey-mid["No generative AI tools were used in the preparation of this assignment."]
+
+.hi-red[**3. No declaration, no acceptance.**] An assignment without a declaration is not accepted until a complete one is provided. Misrepresenting AI use, failing to verify AI output, fabricating sources or data through AI, or using AI to bypass a learning goal may be treated as academic misconduct.
+
+---
+layout: true
+# .tiny[Academic Integrity and Deadlines]
+---
+
+.pull-left[
+.hi-grey[**Integrity**]
+
+- Acknowledge every source of ideas, text, code, data, figures, tables, and research materials that is not your own
+- Plagiarism includes copying or close paraphrasing without citation, reusing your own past work unacknowledged, unauthorized collaboration, fabricated data or references, and AI-generated material without the required disclosure
+- This course follows NTU policies: suspected misconduct may receive .hi-red[a zero on the relevant component]; serious or repeated cases may be referred to the department, college, or university
+]
+
+.pull-right[
+.hi-grey[**Deadlines**]
+
+- Deadlines hold. If you cannot meet one, notify me as early as possible and use the NTU student leave procedure; in urgent cases, email me first
+- Approved leave, or an approved extension, does not automatically waive the work; I arrange a reasonable make-up when appropriate
+- No approved leave and no prior approval: .hi-red[absent for missed in-class activities; late work may receive no credit]
+]
+
+.tiny.grey-mid[Details: syllabus §9.1 and §9.3 · NTU student leave procedure: advisory.ntu.edu.tw/CMS/Page/44]
+
+---
+layout: true
+# .tiny[Dignity, Respect, and Support]
+---
+
+&amp;nbsp;
+
+National Taiwan University is committed to a **respectful, inclusive, and safe learning environment**.
+
+
+You have the right to study free from bullying, harassment, discrimination, sexual harassment, sexual assault, sexual bullying, stalking, and other conduct that undermines dignity or safety.
+
+
+This course reads politically sensitive material. Disagreement is expected, but it stays .hi-slate[evidence-based, professional, and respectful] — argue with the evidence, not the person.
+
+
+If you experience or witness harassment, gender-based misconduct, discrimination, bullying, or a threat to your safety, you are encouraged to seek support. Reports are handled under the relevant NTU procedures.
+
+
+.hi-turquoise[You are also welcome to contact me directly] — I will help you find the right route.
+
+---
+
+&amp;nbsp;
+
+.tiny[
+.pull-left[
+**Reporting**
+
+Gender Equity Education Committee (性別平等教育委員會) complaint lines: **(02) 3366-9607** / **(02) 3366-9608**, gender@ntu.edu.tw
+
+NTU sexual harassment prevention contact line: **(02) 3366-5903**, leader@ntu.edu.tw
+
+Or speak to me first if you prefer.
+]
+
+.pull-right[
+**Support and emergencies**
+
+Student Counseling Center: **(02) 3366-2181**, my.ntu.edu.tw/counsel — an initial intake appointment is required; walk-ins welcome in urgent situations
+
+In-college student support, a counselor based in your own college (walk-ins welcome): csw.ntu.edu.tw
+
+Campus Security Center, **24 hours: (02) 3366-9119**
+
+If life or physical safety is in danger: **119** (medical) or **110** (police)
+
+Free national hotlines, 24 hours: Mental Health Care Line **1925**; Lifeline **1995**
+]
+]
+
+&amp;nbsp;
+
+.tiny[Save the 24-hour numbers in your phone now, before you need them.]
+
+---
+layout: true
+# .tiny[Before You Leave: Background Survey]
+---
+
+&amp;nbsp;
+
+.pull-left[
+
+.huge.hi-grey[**Take five minutes now.**]
+
+.hi-slate[**Student Background and Course Expectations**]
+
+- Where you are with **R**, **Python**, and text analysis
+- What you want out of the course, and what you are working on
+- I use the answers to set the pace of the labs and pick examples that fit your projects
+
+.hi-turquoise[**Scan the code and fill it in before you go.**]
+
+]
+
+.pull-right[
+
+&amp;nbsp;
+
+&lt;img src="course-figures/survey-qr.png" alt="" width="78%" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+layout: true
+# .tiny[Before Next Week]
+---
+
+&amp;nbsp;
+
+.huge.hi-grey[**W2: R, Python, GitHub, and Collaborative Workflow**]
+
+
+- Bring a laptop with a **working development environment** — we build on it every week
+
+
+- Install .hi-slate[**RStudio**] (R) or .hi-slate[**Positron**] (Python and cross-language work); a setup guide goes out before class
+
+
+- Create a free .hi-slate[**GitHub account**] and install .hi-slate[**GitHub Desktop**] — .grey-mid[no command-line Git required]
+
+
+- .hi-turquoise[**Recommended:**] apply for the free **GitHub Student Developer Pack** with your NTU email — GitHub Pro and Copilot at no cost
+
+
+&amp;nbsp;
+
+.hi-grey[**Reading for W2**]: *quanteda tutorials*, Ch. 1 · Grimmer, Roberts &amp; Stewart (2022), Ch. 4 .tiny[(excerpt provided)] · Quarto "Get Started" docs · Posit blog, *Privacy and AI Assistants* .tiny[(skim)]
+
+.tiny[Catching up on W1? Benoit (2020) · Grimmer &amp; Stewart (2013) · Nielbo et al. (2024) · Egami et al. (2022)]
+
+---
+layout: true
+# .tiny[References]
+---
+
+.tiny[
+
+- Grimmer, J. &amp; Stewart, B. M. (2013). Text as Data: The Promise and Pitfalls of Automatic Content Analysis Methods for Political Texts. *Political Analysis* 21(3): 267–297.
+- Grimmer, J., Roberts, M. E. &amp; Stewart, B. M. (2022). *Text as Data: A New Framework for Machine Learning and the Social Sciences*. Princeton University Press.
+- Jankin, S., Liao, Y.-C. &amp; Tang, L. (2026). Folk Theories of Partisan Conflict. Working paper.
+- Rodríguez, P. L., Spirling, A. &amp; Stewart, B. M. (2023). Embedding Regression: Models for Context-Specific Description and Inference. *American Political Science Review*. doi:10.1017/s0003055422001228
+]
+
+---
+
+.tiny[
+
+- Benoit, K. (2020). Text as Data: An Overview. In L. Curini &amp; R. Franzese (eds.), *The SAGE Handbook of Research Methods in Political Science and International Relations*: 461–497. Sage. doi:10.4135/9781526486387.n29
+- Egami, N., Fong, C. J., Grimmer, J., Roberts, M. E. &amp; Stewart, B. M. (2022). How to Make Causal Inferences Using Texts. *Science Advances* 8(42): eabg2652. doi:10.1126/sciadv.abg2652
+- Grimmer, J. (2010). A Bayesian Hierarchical Topic Model for Political Texts: Measuring Expressed Agendas in Senate Press Releases. *Political Analysis* 18(1): 1–35. doi:10.1093/pan/mpp034
+- Heseltine, M. &amp; Clemm von Hohenberg, B. (2024). Large Language Models as a Substitute for Human Experts in Annotating Political Text. *Research &amp; Politics* 11(1). doi:10.1177/20531680241236239
+- Jurafsky, D. &amp; Martin, J. H. (2026). *Speech and Language Processing* (3rd ed., online draft). https://web.stanford.edu/~jurafsky/slp3/
+- Laver, M., Benoit, K. &amp; Garry, J. (2003). Extracting Policy Positions from Political Texts Using Words as Data. *American Political Science Review* 97(2): 311–331. doi:10.1017/s0003055403000698
+- Nielbo, K. L. et al. (2024). Quantitative Text Analysis. *Nature Reviews Methods Primers* 4(1): 25. doi:10.1038/s43586-024-00302-w
+- Roberts, M. E., Stewart, B. M., Tingley, D. et al. (2014). Structural Topic Models for Open-Ended Survey Responses. *American Journal of Political Science* 58(4): 1064–1082. doi:10.1111/ajps.12103
+- Slapin, J. B. &amp; Proksch, S.-O. (2008). A Scaling Model for Estimating Time-Series Party Positions from Texts. *American Journal of Political Science* 52(3): 705–722. doi:10.1111/j.1540-5907.2008.00338.x
+- Watanabe, K. &amp; Müller, S. (2023). *Quanteda Tutorials*. https://tutorials.quanteda.io
+
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "18:12"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(90000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

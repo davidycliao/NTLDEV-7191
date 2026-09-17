@@ -1,0 +1,135 @@
+```{r}
+#| label: tokenization-comparison-data
+#| include: false
+token_rows <- read.csv("../lab/toy/tokenization_th_ja_zh_tokens.csv", fileEncoding = "UTF-8")
+thai_tokens <- token_rows$token[token_rows$language == "Thai"]
+with_pos <- function(language) {
+  rows <- token_rows[token_rows$language == language, ]
+  paste0(rows$token, " (", rows$upos, ")")
+}
+thai_labels <- with_pos("Thai")
+japanese_labels <- with_pos("Japanese")
+chinese_labels <- with_pos("Chinese")
+thai_provenance <- jsonlite::fromJSON("../lab/toy/udpipe_thai_provenance.json")
+stopifnot(all(token_rows$method[token_rows$language == "Thai"] == "R httr2 / UDPipe 2 API"))
+```
+
+## Word tokenization across languages {.three-languages .pos-labels}
+
+:::::: {.slide-body}
+
+Same meaning: “I like coffee.”
+
+:::: {.columns}
+::: {.column width="33%"}
+### Thai
+
+::: {.method-label}
+R: httr2 + UDPipe 2 API
+:::
+
+::: {.original-text lang="th"}
+ฉันชอบกาแฟ
+:::
+
+::: {.token-label}
+Tokens (POS)
+:::
+
+::: {.token-result lang="th"}
+`r thai_labels[1]`  
+`r thai_labels[2]`  
+`r thai_labels[3]`
+:::
+
+**`r length(thai_tokens)` tokens**
+
+The Thai model finds word boundaries.
+:::
+
+::: {.column width="33%"}
+### Japanese
+
+::: {.method-label}
+R: udpipe (japanese-gsd)
+:::
+
+::: {.original-text lang="ja"}
+私はコーヒーが好きです。
+:::
+
+::: {.token-label}
+Tokens (POS)
+:::
+
+::: {.token-result lang="ja"}
+`r paste(japanese_labels[1:2], collapse = " / ")`  
+`r paste(japanese_labels[3:4], collapse = " / ")`  
+`r paste(japanese_labels[5:6], collapse = " / ")`
+:::
+
+**6 tokens**
+
+Particles and auxiliaries remain separate tokens.
+:::
+
+::: {.column width="33%"}
+### Chinese
+
+::: {.method-label}
+R: udpipe (chinese-gsd)
+:::
+
+::: {.original-text lang="zh-Hant"}
+我喜歡咖啡。
+:::
+
+::: {.token-label}
+Tokens (POS)
+:::
+
+::: {.token-result lang="zh-Hant"}
+`r chinese_labels[1]`  
+`r chinese_labels[2]`  
+`r chinese_labels[3]`
+:::
+
+**3 tokens**
+
+Multi-character words can form single tokens.
+:::
+::::
+
+::: {.comparison-note}
+POS = part of speech. Counts exclude punctuation.
+:::
+
+::::::
+
+::: {.source}
+Straka & Straková (2017); Straka (2018)
+:::
+
+::: {.notes}
+**Purpose.** Make word boundaries visible across Thai, Japanese, and Traditional Chinese.
+
+**Explain.** Read the coffee sentences and then their tokens. Parentheses contain actual model POS predictions. The Japanese example has six displayed tokens; Thai and Chinese have three. Counts exclude punctuation and reflect these particular models and sentences.
+
+**Ask.** Does a larger token count imply more information or stronger preference? No; segmentation conventions and grammatical expression differ.
+
+**Transition.** Keep the coffee meaning but add grammatical relationships. The next slide replaces Japanese with English to provide a familiar reference alongside Chinese and Thai.
+
+**Background and sources.**
+
+Parenthesized labels are the models' actual universal POS (UPOS) predictions. PRON = pronoun, VERB = verb, NOUN = noun, ADP = adposition, ADJ = adjective, and AUX = auxiliary. Keep the Japanese model's ADP tags for は and が, and ADJ for 好き. These are model annotations, not manually assigned labels. Read the Japanese tokens left to right across each row, then continue to the next row.
+
+All example scripts are R. Thai uses httr2 to call the official UDPipe 2 REST API with the pinned thai-tud-ud-2.17-251125 model. The cached API example was retrieved on `r substr(thai_provenance$retrieved_at, 1, 10)` (Asia/Taipei). udpipe_thai_api.R reuses the supplied raw JSON response by default, including its model and license metadata. It makes a request only when the cache is missing or the user explicitly requests `--refresh`. The remote service returned ฉัน/PRON, ชอบ/VERB and กาแฟ/NOUN. This model supplies no lemmas, represented by underscores in CoNLL-U. R udpipe_download_model() does not list Thai in its built-in catalogue. This does not mean UDPipe has no Thai model.
+
+Japanese and Traditional Chinese run locally with udpipe::udpipe_annotate(parser = "none") and the japanese-gsd and chinese-gsd UD 2.5-191206 models. PUNCT tokens are excluded from displayed counts. This comparison illustrates particular language/model combinations, rather than a pure language effect under one identical model. The sentences are synthetic parallel examples. A fresh Thai request requires network access. The saved response supports offline rendering.
+
+Sources: [UDPipe 2 models](https://ufal.mff.cuni.cz/udpipe/2/models), [official API client and endpoint](https://github.com/ufal/udpipe/blob/udpipe-2/udpipe2_client.py), [R udpipe guide](https://bnosac.github.io/udpipe/docs/doc2.html), [UDPipe 1 models](https://ufal.mff.cuni.cz/udpipe/1/models). Thai model license: CC BY-NC-SA, preserved in ../lab/toy/udpipe_thai_response.json.
+
+Paper references: Straka, Milan, and Jana Straková. 2017. [Tokenizing, POS Tagging, Lemmatizing and Parsing UD 2.0 with UDPipe](https://aclanthology.org/K17-3009/). In *Proceedings of the CoNLL 2017 Shared Task: Multilingual Parsing from Raw Text to Universal Dependencies*, 88–99. Association for Computational Linguistics. doi:10.18653/v1/K17-3009.
+
+Straka, Milan. 2018. [UDPipe 2.0 Prototype at CoNLL 2018 UD Shared Task](https://aclanthology.org/K18-2020/). In *Proceedings of the CoNLL 2018 Shared Task: Multilingual Parsing from Raw Text to Universal Dependencies*, 197–207. Association for Computational Linguistics. doi:10.18653/v1/K18-2020. These papers describe the software methods. The model versions and actual response provenance are documented above.
+:::
