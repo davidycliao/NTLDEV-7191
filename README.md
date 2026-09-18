@@ -80,8 +80,8 @@ Students present final research posters, deliver 5-minute presentations, join in
 
 ### Week 16: Constitution Day Holiday (No Class)
 
-No class on December 25. Students revise their projects independently after the poster session. **Manuscript due: TBA. Bonus claim deadline: TBA.** Both deadlines will be announced on NTU COOL. Submit the final research paper through Overleaf with instructor editing access; include any bonus claim and its supporting documents in a shared Overleaf project.
+No class on December 25. Students revise their projects independently after the poster session. **Manuscript due: TBA. Bonus claim deadline: TBA.** Submit the final research paper through Overleaf with instructor editing access; include any bonus claim and its supporting documents in a shared Overleaf project.
 
 ---
 
-*Acknowledgments: The primary blueprint for this course is Martijn Schoonvelde's Essex Summer School 2026: Introduction to QTA syllabus and teaching materials, adapted for this semester-long course. I also thank Stefan Müller for permission to adapt his quantitative text analysis syllabus and teaching materials.*
+*Acknowledgments: This course draws primarily on Martijn Schoonvelde's syllabus and teaching materials for Introduction to QTA at the 2026 Essex Summer School, adapted here for a semester-long format. I also thank Stefan Müller for permission to adapt his quantitative text analysis syllabus.*
