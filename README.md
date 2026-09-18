@@ -13,7 +13,7 @@
 
 | Week | Slides | Lab |
 | :---: | :--- | :--- |
-| Week 1 | [![PDF](https://img.shields.io/badge/PDF-E53935?style=flat-square)](Ｗ1/slide/week1.pdf) · [![HTML](https://img.shields.io/badge/HTML-E34F26?style=flat-square&logo=html5&logoColor=white)](Ｗ1/slide/week1.html) | No lab |
+| Week 1 | [![PDF](https://img.shields.io/badge/PDF-E53935?style=flat-square)](Ｗ1/slide/week1.pdf) · [![HTML](https://img.shields.io/badge/HTML-E34F26?style=flat-square&logo=html5&logoColor=white)](https://raw.githack.com/davidycliao/NTLDEV-7191/main/%EF%BC%B71/slide/week1.html#1) | No lab |
 | Week 2 | [![PDF](https://img.shields.io/badge/PDF-E53935?style=flat-square)](W2/slide/week1.pdf) · [![HTML](https://img.shields.io/badge/HTML-E34F26?style=flat-square&logo=html5&logoColor=white)](https://raw.githack.com/davidycliao/NTLDEV-7191/refs/heads/main/W2/slide/week1.html) | [Lab instructions](W2/lab/README.md) · [R](W2/lab/Lab_Session_W2.R) · [Quarto file](W2/lab/Lab_Session_W2.qmd) · [Data](W2/lab/Data/hc_sample_1945_2025.rds) · [Answer key](W2/lab/Lab_Session_W2_Answers.md) |
 
 ## Course Schedule
