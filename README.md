@@ -84,4 +84,4 @@ No class on December 25. Students revise their projects independently after the 
 
 ---
 
-*Acknowledgments: This course draws primarily on Martijn Schoonvelde's syllabus and teaching materials for Introduction to QTA at the 2026 Essex Summer School, adapted here for a semester-long format. I also thank Stefan Müller for permission to adapt his quantitative text analysis syllabus.*
+*Acknowledgments: I thank Stefan Müller ([GitHub](https://github.com/stefan-mueller)) for permission to adapt his quantitative text analysis syllabus for this semester-long course. The lab sessions draw primarily on teaching materials by Martijn Schoonvelde ([GitHub](https://github.com/hjmschoonvelde)) for Introduction to QTA at the 2026 Essex Summer School.*
