@@ -5,6 +5,8 @@ __pycache__/
 # Keep Grimmer 2022 book and chapter PDFs local (copyright).
 [Gg]rimmer*2022*.[Pp][Dd][Ff]
 
-# Instructor slide sources and presenter exports stay local.
-**/slide/*.[Qq][Mm][Dd]
+# Publish only HTML and PDF outputs from slide folders.
+**/slide/**
+!**/slide/*.[Hh][Tt][Mm][Ll]
+!**/slide/*.[Pp][Dd][Ff]
 **/slide/*-presenter.[Hh][Tt][Mm][Ll]
