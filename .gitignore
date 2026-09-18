@@ -1,5 +1,10 @@
 # macOS Finder metadata
 .DS_Store
+__pycache__/
 
 # Keep Grimmer 2022 book and chapter PDFs local (copyright).
 [Gg]rimmer*2022*.[Pp][Dd][Ff]
+
+# Instructor slide sources and presenter exports stay local.
+**/slide/*.[Qq][Mm][Dd]
+**/slide/*-presenter.[Hh][Tt][Mm][Ll]

@@ -14,6 +14,7 @@ from reportlab.lib.utils import ImageReader
 from pypdf import PdfReader, PdfWriter, Transformation
 from pypdf.generic import NameObject
 import json, re, base64, io
+from publish_html import publish_html
 base=Path(__file__).resolve().parent
 # Capture the PDF build time once, independently of the saved HTML's timestamp.
 compiled_at=datetime.now(ZoneInfo('Asia/Taipei'))
@@ -29,6 +30,10 @@ INK=colors.HexColor('#1f2a37'); SLATE=colors.HexColor('#314f4f'); BLUE=colors.He
 GREEN=colors.HexColor('#7cae96'); MUTED=colors.HexColor('#5f6f7f'); LINE=colors.HexColor('#d9e3df')
 W,H=1050,700; LEFT=48; CW=W-2*LEFT
 TITLE_TOP=40; BODY_BOTTOM=78
+# Refresh the shareable HTML from the local presenter export before reading it.
+presenter_html=base/'week1-presenter.html'
+if presenter_html.exists():
+ publish_html(presenter_html,base/'week1.html')
 root=html.fromstring((base/'week1.html').read_text(encoding='utf-8'))
 sections=root.xpath('//div[contains(concat(" ",normalize-space(@class)," ")," slides ")]/section')
 def classes(e): return e.get('class','').split()
